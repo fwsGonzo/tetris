@@ -1,16 +1,24 @@
 #include "main.hpp"
 
 #include <library/log.hpp>
+#include "board.hpp"
 #include "renderer.hpp"
 
 using namespace library;
-using namespace game;
 
 int main(void)
 {
 	logger << Log::INFO << "Tetris!" << Log::ENDL;
 	
-	Renderer r;
-	r.startRender();
+	/// initialize renderer & subsystems ///
+	game::Renderer r;
+	
+	/// initialize game ///
+	game::board.init();
+	
+	/// start game ///
+	r.start();
+	
+	logger << Log::INFO << "Bye!" << Log::ENDL;
 	return 0;
 }

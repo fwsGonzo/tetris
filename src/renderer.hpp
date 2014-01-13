@@ -14,7 +14,7 @@ namespace game
 		Renderer();
 		~Renderer();
 		
-		void startRender();
+		void start();
 		
 	private:
 		library::WindowClass* window;

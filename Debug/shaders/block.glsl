@@ -7,7 +7,7 @@
 
 uniform mat4 matproj;
 uniform mat4 matview;
-
+uniform float time;
 
 in vec3 in_vertex;
 in vec3 in_normal;
@@ -15,11 +15,19 @@ in vec4 in_color;
 
 out vec4 out_color;
 
+const vec3 sun = normalize(vec3(-1, -1, 1));
+
 void main(void)
 {
-	gl_Position = matproj * matview * vec4(in_vertex, 1.0);
+	vec4 pos = vec4(in_vertex, 1.0);
+	vec3 delta = vec3(sin(pos.x + time * 4), sin(pos.y + time * 4), sin(pos.z + time * 2.0));
+	pos.xyz += delta * 0.1;
 	
-	out_color = in_color;
+	gl_Position = matproj * matview * pos;
+	
+	float dotsun = 0.8 + 0.2 * dot(in_normal, sun);
+	
+	out_color = vec4(in_color.rgb * dotsun, in_color.a);
 }
 
 #endif

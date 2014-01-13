@@ -13,10 +13,11 @@ namespace game
 	{
 	public:
 		Block();
-		Block(int id, const library::Bitmap& bmp);
+		Block(int id, int rot, const library::Bitmap& bmp);
+		Block& operator= (const Block& block);
 		~Block();
 		
-		library::VoxelModel& getModel();
+		void render();
 		
 		int getWidth() const;
 		int getHeight() const;
@@ -29,15 +30,35 @@ namespace game
 		
 		int id;
 		int rotation; // 0, 1, 2, 3 (cw)
+		
+		friend class Board;
 	};
 	
 	class Shapes
 	{
 	public:
+		/// http://en.wikipedia.org/wiki/Tetris ///
+		enum shapes_t
+		{
+			BOARD = 0,
+			SHAPE_I,
+			SHAPE_J,
+			SHAPE_L,
+			SHAPE_O,
+			SHAPE_S,
+			SHAPE_T,
+			SHAPE_Z,
+			
+			NUM_SHAPES
+		};
+		static const int ROTATIONS = 4;
+		
+		static Block shapes[NUM_SHAPES][ROTATIONS];
+		
 		static void init();
 		
 		static void count();
-		static Block& get(int index);
+		static Block& get(int index, int rotation);
 		
 	};
 	

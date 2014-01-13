@@ -1,16 +1,26 @@
 #ifndef SCENE_RENDERER_HPP
 #define SCENE_RENDERER_HPP
 
+#include <library/opengl/camera.hpp>
+namespace library
+{
+	class WindowClass;
+}
+
 namespace game
 {
-
-class SceneRenderer
-{
-public:
-	SceneRenderer();
-	~SceneRenderer();
-
-};
+	class SceneRenderer
+	{
+	public:
+		
+		void init(library::WindowClass& wnd);
+		
+		void render(double time, double dtime);
+		
+		library::Camera camera;
+		library::WindowClass* window;
+		
+	};
 
 }
 

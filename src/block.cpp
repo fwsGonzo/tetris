@@ -1,42 +1,46 @@
 #include "block.hpp"
 
+#include <library/log.hpp>
 #include <library/bitmap/bitmap.hpp>
+#include <library/bitmap/colortools.hpp>
+#include <library/math/vector.hpp>
 #include <library/voxels/voxelmodel.hpp>
+#include <library/voxels/voxelizer.hpp>
+#include <cstdint>
 
 using namespace library;
 
 namespace game
 {
-	/// http://en.wikipedia.org/wiki/Tetris
-	enum shapes_t
-	{
-		BOARD = 0,
-		SHAPE_I,
-		SHAPE_J,
-		SHAPE_L,
-		SHAPE_O,
-		SHAPE_S,
-		SHAPE_T,
-		SHAPE_Z,
-		
-		NUM_SHAPES
-	};
-	Block shapes[NUM_SHAPES];
+	Block Shapes::shapes[Shapes::NUM_SHAPES][Shapes::ROTATIONS];
 	
 	Block::Block()
 	{
 		this->id = 0;
-		this->bmp   = new Bitmap();
-		this->voxel = new VoxelModel();
+		this->bmp   = nullptr;
+		this->voxel = nullptr;
 	}
-	Block::Block(int id, const Bitmap& bmp) : Block()
+	Block::Block(int id, int rot, const Bitmap& bmp) : Block()
 	{
 		this->id = id;
-		this->bmp[0] = bmp;
+		this->bmp = new Bitmap(bmp);
+		this->voxel = new VoxelModel();
+		
+		XModel xm;
+		xm.extrude(*this->bmp, vec3(0.0), vec3(1.0));
+		voxel->create(xm.vertices(), xm.data());
+	}
+	Block& Block::operator = (const Block& block)
+	{
+		this->id = block.id;
+		this->bmp = new Bitmap(*block.bmp);
+		this->voxel = new VoxelModel(*block.voxel);
+		return *this;
 	}
 	Block::~Block()
 	{
-		delete bmp; delete voxel;
+		delete bmp;
+		delete voxel;
 	}
 	
 	int Block::getWidth() const
@@ -53,24 +57,46 @@ namespace game
 		return bmp->getPixel(x, y);
 	}
 	
-	VoxelModel& Block::getModel()
+	void Block::render()
 	{
-		return this->voxel[0];
+		if (voxel->isGood()) voxel->render();
+	}
+	
+	void createShape(int index, Bitmap bmp)
+	{
+		for (int i = 0; i < Shapes::ROTATIONS; i++)
+		{
+			Shapes::shapes[index][i] = Block(index, i, bmp);
+			bmp = bmp.rotate90();
+		}
 	}
 	
 	void Shapes::init()
 	{
-		Bitmap bmp(4, 1, 32);
 		Bitmap::rgba8_t C;
 		
-		// set entire block to red
-		C = bmp.makeColor(255, 0, 0, 255);
+		// I shape
+		Bitmap bmp(4, 1);
+		C = BGRA8(255, 0, 0, 255);
 		bmp.clear(C);
 		
-		shapes[SHAPE_I] = Block(SHAPE_I, bmp);
+		createShape(SHAPE_I, bmp);
+		
+		// J shape
+		bmp = Bitmap(3, 2);
+		C = BGRA8(0, 0, 255, 255);
+		bmp.setPixel(0, 1, C); bmp.setPixel(1, 1, C); bmp.setPixel(2, 1, C);
+		bmp.setPixel(0, 0, 0); bmp.setPixel(1, 0, 0); bmp.setPixel(2, 0, C);
+		
+		createShape(SHAPE_J, bmp);
+		
 		
 		
 	}
 	
+	Block& Shapes::get(int index, int rotation)
+	{
+		return shapes[index][rotation];
+	}
+	
 }
-

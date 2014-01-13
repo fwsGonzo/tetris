@@ -12,7 +12,7 @@ endif
 # build options
 # -Ofast -msse4.1 -ffast-math -mfpmath=both -march=native -flto -fwhole-program
 # -Ofast -msse4.1 -ffast-math -mfpmath=both -march=native
-BUILDOPT = -g
+BUILDOPT = -ggdb3
 # output file
 OUTPUT   = ./Debug/tetris
 

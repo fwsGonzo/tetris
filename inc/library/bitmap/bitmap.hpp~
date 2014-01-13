@@ -10,7 +10,7 @@ namespace library
 	public:
 		typedef unsigned int rgba8_t;
 		
-		// supported file formats
+		// supported file-formats
 		enum bitmap_type
 		{
 			BMP,
@@ -20,9 +20,17 @@ namespace library
 		// constructors
 		Bitmap();
 		Bitmap(const std::string, bitmap_type);
-		Bitmap(int w, int h, int bits);
-		Bitmap(const Bitmap& bmp);
+		Bitmap(int w, int h);
+		Bitmap(int w, int h, rgba8_t color);
 		~Bitmap();
+		
+		// assignment operator (creates new copy)
+		Bitmap& operator= (const Bitmap& bmp);
+		// copy constructor (creates new copy)
+		Bitmap(const Bitmap& bmp)
+		{
+			this->operator=(bmp);
+		}
 		
 		bool load(const std::string file, bitmap_type);
 		
@@ -38,10 +46,6 @@ namespace library
 		inline int getHeight() const
 		{
 			return this->height;
-		}
-		inline int getBits() const
-		{
-			return this->bits;
 		}
 		inline int getFormat() const
 		{
@@ -87,7 +91,7 @@ namespace library
 		bool loadPNG(const std::string& file);
 		
 		rgba8_t* buffer;
-		int width, height, bits;
+		int width, height;
 		int format, tilesX, tilesY;
 	};
 	
