@@ -2,7 +2,17 @@
 
 #include <library/log.hpp>
 #include "board.hpp"
+#include "game.hpp"
 #include "renderer.hpp"
+
+/**
+ * Tetris
+ * 
+ * Arrow keys to move the active piece
+ * Space to rotate it
+ * 
+ * Escape (or close window) to exit
+**/
 
 using namespace library;
 
@@ -14,10 +24,10 @@ int main(void)
 	game::Renderer r;
 	
 	/// initialize game ///
-	game::board.init();
+	game::Game gameObject(r.getWindow());
 	
 	/// start game ///
-	r.start();
+	r.start(gameObject);
 	
 	logger << Log::INFO << "Bye!" << Log::ENDL;
 	return 0;

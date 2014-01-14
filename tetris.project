@@ -207,6 +207,10 @@
     <File Name="src/scenerenderer.cpp"/>
     <File Name="src/board.hpp"/>
     <File Name="src/board.cpp"/>
+    <File Name="src/soundman.hpp"/>
+    <File Name="src/soundman.cpp"/>
+    <File Name="src/game.hpp"/>
+    <File Name="src/game.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="misc">
     <File Name="makefile"/>

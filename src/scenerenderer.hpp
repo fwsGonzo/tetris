@@ -9,16 +9,23 @@ namespace library
 
 namespace game
 {
+	class Game;
+	
 	class SceneRenderer
 	{
 	public:
 		
 		void init(library::WindowClass& wnd);
+		void attachGame(Game& game)
+		{
+			this->game = &game;
+		}
 		
 		bool render(double time, double dtime);
 		
 		library::Camera camera;
 		library::WindowClass* window;
+		Game* game;
 		
 	};
 

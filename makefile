@@ -26,7 +26,7 @@ CCFLAGS = -c -Wall -pedantic -Iinc
 ifeq ($(OS),Windows_NT)
 	LFLAGS  = -Llib -llibrary -lpthread -lbassdll -lglfw3 -lgdi32 -lopengl32
 else
-	LFLAGS  = -Llib -llibrary -lpthread -lbass -lGL -lGLU -lglfw3 -lX11 -lXxf86vm -lXrandr -lXi
+	LFLAGS  = -Llib -llibrary -lpthread -lbass -lGL -lGLU -lglfw3 -lX11 -lXxf86vm -lXrandr -lXi -Wl,-rpath,.
 endif
 # resource builder
 RES = windres

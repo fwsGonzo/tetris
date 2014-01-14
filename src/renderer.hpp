@@ -8,13 +8,20 @@ namespace library
 
 namespace game
 {
+	class Game;
+	
 	class Renderer
 	{
 	public:
 		Renderer();
 		~Renderer();
 		
-		void start();
+		void start(Game& game);
+		
+		library::WindowClass& getWindow()
+		{
+			return *window;
+		}
 		
 	private:
 		library::WindowClass* window;

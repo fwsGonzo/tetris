@@ -1,6 +1,19 @@
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 
+/**
+ * Block is a container for a bitmap (pixel array), and a voxelmodel (opengl renderable)
+ * 
+ * The current masking convention is that a pixel value of 0 is invisible, whereas any other
+ * is treated as if it was (when in fact it might not be). It's done to simplify algorithms:
+ * 
+ * if (bmp->getPixel(x, y))
+ * 		// pixel should be treated as visible
+ * else
+ * 		// pixel value must be 0 (and evaluates to false)
+ * 
+**/
+
 namespace library
 {
 	class Bitmap;
@@ -69,7 +82,7 @@ namespace game
 		static void count();
 		static Block& get(int index, int rotation);
 		
-		static int randomShape();
+		static Block& randomShape();
 		
 	};
 	

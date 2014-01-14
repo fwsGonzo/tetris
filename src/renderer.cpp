@@ -34,10 +34,12 @@ namespace game
 	
 	bool renderTetris(WindowClass& wnd, double dtime, double timeElapsed);
 	
-	void Renderer::start()
+	void Renderer::start(Game& game)
 	{
 		/// start game ///
 		logger << Log::INFO << "Game started" << Log::ENDL;
+		scene.attachGame(game);
+		
 		window->startRenderingLoop(renderTetris, 1.0);
 		// close window after renderloop
 		window->close();

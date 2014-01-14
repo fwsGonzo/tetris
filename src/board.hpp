@@ -19,15 +19,20 @@ namespace game
 	class Board
 	{
 	public:
-		void init();
+		Board();
 		void renderBackground();
 		void renderBoard();
 		
 		static const int WIDTH  = 10;
 		static const int HEIGHT = 20;
 		
-		unsigned int operator () (int x, int y) const;
+		// board operations
+		inline unsigned int operator () (int x, int y) const
+		{
+			return board(x, y);
+		}
 		
+		// board getters
 		int getWidth() const
 		{
 			return WIDTH;
@@ -37,6 +42,7 @@ namespace game
 			return HEIGHT;
 		}
 		
+		// functions that affect the active piece
 		CurrentPiece& getPiece()
 		{
 			return piece;
@@ -50,7 +56,6 @@ namespace game
 		CurrentPiece piece;
 		
 	};
-	extern Board board;
 }
 
 #endif // BOARD_HPP

@@ -1,20 +1,16 @@
 #include "scenerenderer.hpp"
 
 #include <library/log.hpp>
-#include <library/opengl/input.hpp>
 #include <library/opengl/window.hpp>
-#include "shaderman.hpp"
 #include "board.hpp"
-
-#include <GL/glfw3.h>
+#include "game.hpp"
+#include "shaderman.hpp"
+#include "soundman.hpp"
 
 using namespace library;
 
 namespace game
 {
-	double gravitySpeed, gravityTime;
-	double movementSpeed, movementTime;
-	
 	void SceneRenderer::init(WindowClass& wnd)
 	{
 		/// create perspective camera ///
@@ -35,22 +31,14 @@ namespace game
 		Shader& shd = shaderman[Shaderman::BLOCK_SHADER];
 		shd.bind();
 		shd.sendMatrix("matproj", camera.getProjection());
-		
-		/// initialize keyboard input ///
-		input.init(wnd, true, false);
-		
-		// game speed
-		gravitySpeed = 0.5;
-		gravityTime = 0.0;
-		
-		movementSpeed = 0.05;
-		movementTime = 0.0;
 	}
 	
 	bool SceneRenderer::render(double time, double dtime)
 	{
 		Shader& shd = shaderman[Shaderman::BLOCK_SHADER];
 		shd.bind();
+		
+		Board& board = game->getBoard();
 		
 		camera.setTranslation(-board.getWidth() / 2.0, -board.getHeight() / 2.0, -20);
 		
@@ -59,33 +47,18 @@ namespace game
 		
 		board.renderBackground();
 		
-		// brick movement
-		if (time > movementTime + movementSpeed)
-		{
-			movementTime = time;
-			// move the piece left/right with arrow keys
-			if (input.getKey(GLFW_KEY_LEFT))
-				if (board.getPiece().x > 0) board.getPiece().x--;
-			if (input.getKey(GLFW_KEY_RIGHT))
-				if (board.getPiece().x < board.WIDTH-board.getPiece().block->getWidth()) board.getPiece().x++;
-			// rotate the piece with Spacebar
-			if (input.getKey(GLFW_KEY_SPACE)) board.getPiece().rotate();
-		}
-		// move piece down over time
-		if (time > gravityTime + gravitySpeed)
-		{
-			gravityTime = time;
-			if (board.getPiece().y == 0)
-			{
-				// burn into board
-				board.burn();
-				board.selectNewPiece();
-			}
-			else
-			{
-				board.getPiece().y--;
-			}
-		}
+		/**
+		 * All renderable objects start at (0, 0) and go outwards positively
+		 * This means we need to translate the objects using matrices to the intended position,
+		 * and that simplifies alot of the internal math, such as collisions. All we need to do
+		 * is keep adding offsets such as + (dx, dy) to each test.
+		 * 
+		 * Visually, the background is drawn at (0, 0, 0), and the board is at (0, 0, 1); meaning
+		 * the board is actually ahead of the background, by 1 voxel unit.
+		 * The active piece is translated to (piece.x, piece.y, 1) so that it is on the same Z as
+		 * the board, but has its own (x, y) position.
+		 * 
+		**/
 		
 		// render board
 		mat4 matview = camera.getViewMatrix();
@@ -95,14 +68,16 @@ namespace game
 		board.renderBoard();
 		
 		// render active piece
-		matview.translate(board.getPiece().x, board.getPiece().y, 0);
+		CurrentPiece& activePiece = board.getPiece();
+		
+		matview.translate(activePiece.x, activePiece.y, 0);
 		shd.sendMatrix("matview", matview);
 		
 		/// render current piece ///
-		board.getPiece().block->render();
+		activePiece.block->render();
 		
-		// stop rendering when Escape key is pressed (effectively ending the game)
-		return input.getKey(GLFW_KEY_ESCAPE) == Input::KEY_RELEASED;
+		// run the gameloop, which also can exit the game (if it returns false)
+		return game->gameHandler(time, dtime);
 	}
 	
 }

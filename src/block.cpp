@@ -156,9 +156,9 @@ namespace game
 		return shapes[index][rotation];
 	}
 	
-	int Shapes::randomShape()
+	Block& Shapes::randomShape()
 	{
-		return toolbox::rnd((int)Shapes::NUM_SHAPES);
+		return shapes[toolbox::rnd((int)Shapes::NUM_SHAPES)][0];
 	}
 	
 }
