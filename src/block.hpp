@@ -21,10 +21,16 @@ namespace game
 		
 		int getWidth() const;
 		int getHeight() const;
+		int getID() const { return id; }
+		int getRotation() const { return rotation; }
 		
 		unsigned int operator () (int x, int y) const;
 		
+		void maskedBlit(const Block& block, int x, int y);
+		
 	private:
+		void updateVoxel();
+		
 		library::Bitmap* bmp;
 		library::VoxelModel* voxel;
 		
@@ -40,16 +46,19 @@ namespace game
 		/// http://en.wikipedia.org/wiki/Tetris ///
 		enum shapes_t
 		{
-			BOARD = 0,
-			SHAPE_I,
+			SHAPE_I = 0,
 			SHAPE_J,
 			SHAPE_L,
 			SHAPE_O,
 			SHAPE_S,
 			SHAPE_T,
 			SHAPE_Z,
+			NUM_SHAPES,
 			
-			NUM_SHAPES
+			BACKGROUND,
+			BOARD,
+			TETRIS_TITLE,
+			
 		};
 		static const int ROTATIONS = 4;
 		
@@ -59,6 +68,8 @@ namespace game
 		
 		static void count();
 		static Block& get(int index, int rotation);
+		
+		static int randomShape();
 		
 	};
 	

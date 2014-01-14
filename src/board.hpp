@@ -5,14 +5,26 @@
 
 namespace game
 {
+	struct CurrentPiece
+	{
+		int x, y;
+		Block* block;
+		
+		void rotate()
+		{
+			block = &Shapes::get(block->getID(), (block->getRotation() + 1) % Shapes::ROTATIONS);
+		}
+	};
+	
 	class Board
 	{
 	public:
 		void init();
-		void render();
+		void renderBackground();
+		void renderBoard();
 		
-		const int WIDTH  = 10;
-		const int HEIGHT = 20;
+		static const int WIDTH  = 10;
+		static const int HEIGHT = 20;
 		
 		unsigned int operator () (int x, int y) const;
 		
@@ -25,8 +37,17 @@ namespace game
 			return HEIGHT;
 		}
 		
+		CurrentPiece& getPiece()
+		{
+			return piece;
+		}
+		void selectNewPiece();
+		void burn();
+		
 	private:
+		Block background;
 		Block board;
+		CurrentPiece piece;
 		
 	};
 	extern Board board;

@@ -15,7 +15,7 @@ namespace game
 		
 		void init(library::WindowClass& wnd);
 		
-		void render(double time, double dtime);
+		bool render(double time, double dtime);
 		
 		library::Camera camera;
 		library::WindowClass* window;

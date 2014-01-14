@@ -45,15 +45,15 @@ namespace game
 	
 	bool renderTetris(WindowClass& wnd, double dtime, double timeElapsed)
 	{
-		glClearColor(0.0, 1.0, 0.0, 1.0);
+		glClearColor(0.1, 0.1, 0.1, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glEnable(GL_DEPTH_TEST);
 		
-		scene.render(timeElapsed, dtime);
+		bool ret = scene.render(timeElapsed, dtime);
 		
 		glfwSwapBuffers(wnd.window());
-		return true;
+		return ret;
 	}
 	
 }
