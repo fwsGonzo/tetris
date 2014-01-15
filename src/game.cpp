@@ -25,16 +25,18 @@ namespace game
 		/// initialize keyboard input ///
 		input.init(wnd, true, false);
 		
-		// game speed
+		// input & gameplay timers
 		gravitySpeed = 0.5;
 		gravityTime = 0.0;
 		
 		movementSpeed = 0.05;
 		movementTime = 0.0;
 		
+		rotationSpeed = 0.2;
+		rotationTime = 0.0;
+		
 		// current dropping
 		droppingDown = false;
-		
 	}
 	
 	Game::~Game()
@@ -51,6 +53,7 @@ namespace game
 			if (time > movementTime + movementSpeed)
 			{
 				movementTime = time;
+				
 				// move the piece left/right with arrow keys
 				if (input.getKey(GLFW_KEY_LEFT))
 				{
@@ -76,9 +79,15 @@ namespace game
 					}
 					else soundman->play(Soundman::PIECE_MOVE_F);
 				}
+			}
+			// conditional timing
+			if (time > rotationTime + rotationSpeed)
+			{
 				// rotate the piece with Spacebar
 				if (input.getKey(GLFW_KEY_SPACE))
 				{
+					rotationTime = time;
+					
 					CurrentPiece piece = board->getPiece();
 					piece.rotate();
 					
@@ -89,11 +98,14 @@ namespace game
 					}
 					else soundman->play(Soundman::PIECE_ROTATE_F);
 				}
-			}
-			if (input.getKey(GLFW_KEY_DOWN))
-			{
-				soundman->play(Soundman::PIECE_DROP);
-				droppingDown = true;
+				// drop piece down with Down key
+				if (input.getKey(GLFW_KEY_DOWN))
+				{
+					rotationTime = time;
+					
+					soundman->play(Soundman::PIECE_DROP);
+					droppingDown = true;
+				}
 			}
 		}
 		// move piece down over time (or when dropping)
@@ -131,10 +143,17 @@ namespace game
 				}
 				else
 				{
-					// the piece would hit something if it moved down, so instead burn
-					board->burn();
-					board->selectNewPiece();
-					soundman->play(Soundman::PIECE_LAND);
+					// the piece would hit something if it moved down, so instead place
+					int rowsRemoved = board->placeBlock();
+					
+					if (rowsRemoved)
+					{
+						// play amazing sounds and use legendary fx here
+					}
+					else
+					{	// play standard sound, just because
+						soundman->play(Soundman::PIECE_LAND);
+					}
 					
 					// no longer dropping down
 					droppingDown = false;

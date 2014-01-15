@@ -30,7 +30,7 @@ namespace game
 		Block& operator= (const Block& block);
 		~Block();
 		
-		void render();
+		void render(int mode);
 		
 		int getWidth() const;
 		int getHeight() const;
@@ -41,6 +41,9 @@ namespace game
 		
 		void maskedBlit(const Block& block, int x, int y);
 		bool testBlock(const Block& block, int x, int y);
+		
+		int  completeRow() const;
+		void removeRow(int row);
 		
 	private:
 		void updateVoxel();

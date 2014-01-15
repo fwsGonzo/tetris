@@ -24,33 +24,53 @@ namespace game
 		logger << Log::INFO << "Creating shapes" << Log::ENDL;
 		Shapes::init();
 		
+		// chose next piece immediately
+		nextPiece = &Shapes::randomShape();
+		
 		// choose random new piece at start of game
 		selectNewPiece();
 	}
 	
-	void Board::renderBackground()
+	void Board::renderBackground(int mode)
 	{
-		this->background.render();
+		this->background.render(mode);
 	}
-	void Board::renderBoard()
+	void Board::renderBoard(int mode)
 	{
-		this->board.render();
+		this->board.render(mode);
 	}
 	
 	void Board::selectNewPiece()
 	{
-		piece.block = &Shapes::randomShape();
+		piece.block = nextPiece;
+		nextPiece   = &Shapes::randomShape();
 		
 		piece.x = getWidth() / 2 - piece.block->getWidth() / 2;
 		piece.y = getHeight(); // + piece.block->getHeight();
 	}
 	
-	// combine the active piece with the current board (burn it into the board)
-	// algorithmically, we are just adding each pixel of the active piece to the board,
-	// with the exception of pixels with alpha=0
-	void Board::burn()
+	int Board::placeBlock()
 	{
+		// combine the active piece with the current board (burn it into the board)
+		// algorithmically, we are just adding each pixel of the active piece to the board,
+		// with the exception of pixels with alpha=0
 		this->board.maskedBlit(*piece.block, piece.x, piece.y);
+		// select new piece automatically
+		selectNewPiece();
+		// remove any completed rows, to avoid annoying the player
+		return removeCompleteRows();
+	}
+	
+	int Board::removeCompleteRows()
+	{
+		int row, count = 0;
+		
+		while ((row = board.completeRow()) != -1)
+		{
+			board.removeRow(row);
+			count++;
+		}
+		return count;
 	}
 	
 }

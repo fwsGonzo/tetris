@@ -57,9 +57,10 @@ namespace game
 		return bmp->getPixel(x, y);
 	}
 	
-	void Block::render()
+	void Block::render(GLint mode)
 	{
-		if (voxel->isGood()) voxel->render();
+		if (voxel->isGood())
+			voxel->render(mode);
 	}
 	
 	void Block::updateVoxel()
@@ -104,6 +105,38 @@ namespace game
 			}
 		}
 		return true;
+	}
+	
+	int Block::completeRow() const
+	{
+		for (int y = 0; y < getHeight(); y++)
+		{
+			int count = 0;
+			for (int x = 0; x < getWidth(); x++)
+				if (bmp->getPixel(x, y)) count++;
+			
+			if (count == getWidth()) return y;
+		}
+		return -1;
+	}
+	void Block::removeRow(int row)
+	{
+		if (row < 0 || row >= getHeight()) 
+			throw std::string("Block::removeRow(): Invalid row");
+		
+		if (row == getHeight()-1)
+		{
+			for (int x = 0;     x < getWidth();  x++)
+				bmp->setPixel(x, row, 0);
+		}
+		else
+		{
+			for (int y = row+1; y < getHeight(); y++)
+			for (int x = 0;     x < getWidth();  x++)
+				bmp->setPixel(x, y-1, bmp->getPixel(x, y));
+		}
+		// make sure we update the voxel mesh
+		updateVoxel();
 	}
 	
 	void createShape(int index, Bitmap bmp)

@@ -215,5 +215,8 @@
   <VirtualDirectory Name="misc">
     <File Name="makefile"/>
     <File Name="README.md"/>
+    <VirtualDirectory Name="shaders">
+      <File Name="Debug/shaders/block.glsl"/>
+    </VirtualDirectory>
   </VirtualDirectory>
 </CodeLite_Project>

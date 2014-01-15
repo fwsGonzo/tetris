@@ -30,6 +30,7 @@ namespace game
 		
 		double gravitySpeed, gravityTime;
 		double movementSpeed, movementTime;
+		double rotationSpeed, rotationTime;
 		
 		bool droppingDown = false;
 	};

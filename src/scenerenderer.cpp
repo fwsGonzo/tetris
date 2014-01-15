@@ -45,7 +45,8 @@ namespace game
 		shd.sendMatrix("matview", camera.getViewMatrix());
 		shd.sendFloat("time", time);
 		
-		board.renderBackground();
+		glEnable(GL_LINE_SMOOTH);
+		board.renderBackground(GL_LINES);
 		
 		/**
 		 * All renderable objects start at (0, 0) and go outwards positively
@@ -60,12 +61,19 @@ namespace game
 		 * 
 		**/
 		
+		// render next piece
+		mat4 matnext = camera.getViewMatrix();
+		matnext.translate(board.getWidth() + 2, board.getHeight() - 4, 0);
+		shd.sendMatrix("matview", matnext);
+		
+		board.getNextPiece().render(GL_QUADS);
+		
 		// render board
 		mat4 matview = camera.getViewMatrix();
 		matview.translate(0, 0, 1);
 		shd.sendMatrix("matview", matview);
 		
-		board.renderBoard();
+		board.renderBoard(GL_QUADS);
 		
 		// render active piece
 		CurrentPiece& activePiece = board.getPiece();
@@ -74,7 +82,7 @@ namespace game
 		shd.sendMatrix("matview", matview);
 		
 		/// render current piece ///
-		activePiece.block->render();
+		activePiece.block->render(GL_QUADS);
 		
 		// run the gameloop, which also can exit the game (if it returns false)
 		return game->gameHandler(time, dtime);

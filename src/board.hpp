@@ -20,45 +20,46 @@ namespace game
 	{
 	public:
 		Board();
-		void renderBackground();
-		void renderBoard();
+		void renderBackground(int mode);
+		void renderBoard(int mode);
 		
 		static const int WIDTH  = 10;
 		static const int HEIGHT = 20;
 		
-		// board operations
-		inline unsigned int operator () (int x, int y) const
-		{
-			return board(x, y);
-		}
-		
 		// board getters
-		int getWidth() const
+		inline int getWidth() const
 		{
 			return WIDTH;
 		}
-		int getHeight() const
+		inline int getHeight() const
 		{
 			return HEIGHT;
 		}
 		
 		// functions that affect the active piece
-		CurrentPiece& getPiece()
+		inline CurrentPiece& getPiece()
 		{
 			return piece;
 		}
-		void selectNewPiece();
-		void burn();
+		inline Block& getNextPiece()
+		{
+			return *nextPiece;
+		}
 		inline bool test(CurrentPiece& piece)
 		{
 			return board.testBlock(*piece.block, piece.x, piece.y);
 		}
+		// returns the number of rows removed
+		int placeBlock();
 		
 	private:
+		void selectNewPiece();
+		int removeCompleteRows();
+		
 		Block background;
 		Block board;
 		CurrentPiece piece;
-		
+		Block* nextPiece;
 	};
 }
 
