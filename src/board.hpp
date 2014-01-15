@@ -49,6 +49,10 @@ namespace game
 		}
 		void selectNewPiece();
 		void burn();
+		inline bool test(CurrentPiece& piece)
+		{
+			return board.testBlock(*piece.block, piece.x, piece.y);
+		}
 		
 	private:
 		Block background;

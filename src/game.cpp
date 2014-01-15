@@ -1,5 +1,6 @@
 #include "game.hpp"
 
+#include <library/log.hpp>
 #include <library/opengl/input.hpp>
 #include <library/opengl/window.hpp>
 #include "board.hpp"
@@ -16,6 +17,7 @@ namespace game
 	{
 		/// initialize sound & music ///
 		soundman = new Soundman();
+		//soundman->playMusic();
 		
 		/// initialize game board ///
 		board = new Board();
@@ -30,6 +32,9 @@ namespace game
 		movementSpeed = 0.05;
 		movementTime = 0.0;
 		
+		// current dropping
+		droppingDown = false;
+		
 	}
 	
 	Game::~Game()
@@ -40,32 +45,100 @@ namespace game
 	
 	bool Game::gameHandler(double time, double dtime)
 	{
-		
-		// brick movement
-		if (time > movementTime + movementSpeed)
+		if (droppingDown == false)
 		{
-			movementTime = time;
-			// move the piece left/right with arrow keys
-			if (input.getKey(GLFW_KEY_LEFT))
-				if (board->getPiece().x > 0) board->getPiece().x--;
-			if (input.getKey(GLFW_KEY_RIGHT))
-				if (board->getPiece().x < board->getWidth() - board->getPiece().block->getWidth()) board->getPiece().x++;
-			// rotate the piece with Spacebar
-			if (input.getKey(GLFW_KEY_SPACE)) board->getPiece().rotate();
+			// brick movement
+			if (time > movementTime + movementSpeed)
+			{
+				movementTime = time;
+				// move the piece left/right with arrow keys
+				if (input.getKey(GLFW_KEY_LEFT))
+				{
+					CurrentPiece piece = board->getPiece();
+					piece.x--; // create new active piece that we have already moved left
+					
+					if (board->test(piece)) // test that the new piece is in a valid position
+					{
+						board->getPiece().x--;
+						soundman->play(Soundman::PIECE_MOVE);
+					}
+					else soundman->play(Soundman::PIECE_MOVE_F);
+				}
+				if (input.getKey(GLFW_KEY_RIGHT))
+				{
+					CurrentPiece piece = board->getPiece();
+					piece.x++;
+					
+					if (board->test(piece))
+					{
+						board->getPiece().x++;
+						soundman->play(Soundman::PIECE_MOVE);
+					}
+					else soundman->play(Soundman::PIECE_MOVE_F);
+				}
+				// rotate the piece with Spacebar
+				if (input.getKey(GLFW_KEY_SPACE))
+				{
+					CurrentPiece piece = board->getPiece();
+					piece.rotate();
+					
+					if (board->test(piece))
+					{
+						board->getPiece().rotate();
+						soundman->play(Soundman::PIECE_ROTATE);
+					}
+					else soundman->play(Soundman::PIECE_ROTATE_F);
+				}
+			}
+			if (input.getKey(GLFW_KEY_DOWN))
+			{
+				soundman->play(Soundman::PIECE_DROP);
+				droppingDown = true;
+			}
 		}
-		// move piece down over time
-		if (time > gravityTime + gravitySpeed)
+		// move piece down over time (or when dropping)
+		if (time > gravityTime + gravitySpeed || droppingDown == true)
 		{
 			gravityTime = time;
-			if (board->getPiece().y == 0)
+			
+			if (board->getPiece().y >= board->getHeight())
 			{
-				// burn into board
-				board->burn();
-				board->selectNewPiece();
+				// the piece is currently above the board itself, so we can't burn
+				// instead the game is over if it hits something
+				CurrentPiece piece = board->getPiece();
+				piece.y--;
+				
+				if (board->test(piece) == false)
+				{
+					// GAME OVER
+					logger << Log::WARN << "Game over!" << Log::ENDL;
+					return false;
+				}
+				else // move the piece into the board (over time)
+				{
+					board->getPiece().y --;
+				}
 			}
 			else
 			{
-				board->getPiece().y--;
+				CurrentPiece piece = board->getPiece();
+				piece.y--;
+				
+				if (board->test(piece))
+				{
+					// we can continue moving the piece down, since it hit nothing
+					board->getPiece().y--;
+				}
+				else
+				{
+					// the piece would hit something if it moved down, so instead burn
+					board->burn();
+					board->selectNewPiece();
+					soundman->play(Soundman::PIECE_LAND);
+					
+					// no longer dropping down
+					droppingDown = false;
+				}
 			}
 		}
 		

@@ -23,6 +23,7 @@ namespace game
 		
 		bool render(double time, double dtime);
 		
+	private:
 		library::Camera camera;
 		library::WindowClass* window;
 		Game* game;

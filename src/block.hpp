@@ -40,6 +40,7 @@ namespace game
 		unsigned int operator () (int x, int y) const;
 		
 		void maskedBlit(const Block& block, int x, int y);
+		bool testBlock(const Block& block, int x, int y);
 		
 	private:
 		void updateVoxel();

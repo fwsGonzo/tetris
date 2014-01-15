@@ -81,6 +81,31 @@ namespace game
 		updateVoxel();
 	}
 	
+	bool Block::testBlock(const Block& block, int x, int y)
+	{
+		if (x < 0) return false;
+		if (x + block.getWidth() > this->getWidth()) return false;
+		if (y < 0) return false;
+		/**
+		 * it is not helpful to test above the board, since that is a valid position at start,
+		 * and is part of the gameover procedure
+		 * instead, we will explicitly validate our position in the for() loops
+		**/
+		//if (y + block.getHeight() > this->getHeight()) return false;
+		
+		for (int dx = 0; dx < block.getWidth(); dx++)
+		for (int dy = 0; dy < block.getHeight(); dy++)
+		{
+			if (y + dy < this->getHeight()) // see comment above (this is a special exception)
+			{
+				// if the block has density at this location, the board must not also have it
+				if (block.bmp->getPixel(dx, dy))
+				if (bmp->getPixel(x + dx, y + dy)) return false;
+			}
+		}
+		return true;
+	}
+	
 	void createShape(int index, Bitmap bmp)
 	{
 		for (int i = 0; i < Shapes::ROTATIONS; i++)

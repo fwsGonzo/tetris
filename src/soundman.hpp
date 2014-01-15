@@ -18,7 +18,13 @@ namespace game
 		enum sounds_t
 		{
 			PIECE_MOVE,
+			PIECE_MOVE_F,
+			
 			PIECE_ROTATE,
+			PIECE_ROTATE_F,
+			
+			PIECE_LAND,
+			PIECE_DROP,
 			
 			NUM_SOUNDS
 		};
@@ -28,6 +34,9 @@ namespace game
 		};
 		
 		void play(sounds_t sound);
+		
+		void playMusic();
+		void stopMusic();
 		
 	private:
 		library::Stream* music;

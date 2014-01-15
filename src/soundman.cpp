@@ -10,15 +10,19 @@ namespace game
 	Soundman::Soundman()
 	{
 		sounds[PIECE_MOVE]   = new Sound("sound/SFX_PieceMoveLR.ogg");
+		sounds[PIECE_MOVE_F] = new Sound("sound/SFX_PieceTouchLR.ogg");
 		sounds[PIECE_ROTATE] = new Sound("sound/SFX_PieceRotateLR.ogg");
+		sounds[PIECE_ROTATE_F] = new Sound("sound/SFX_PieceRotateFail.ogg");
+		
+		sounds[PIECE_LAND] = new Sound("sound/SFX_PieceSoftDrop.ogg");
+		sounds[PIECE_DROP] = new Sound("sound/SFX_PieceHardDrop.ogg");
 		
 		music = new Stream("music/tetris.mp3");
-		music->play();
 	}
 	Soundman::~Soundman()
 	{
-		delete sounds[PIECE_MOVE];
-		delete sounds[PIECE_ROTATE];
+		for (int i = 0; i < (int) NUM_SOUNDS; i++)
+			delete sounds[i];
 		
 		delete music;
 	}
@@ -27,4 +31,14 @@ namespace game
 	{
 		sounds[sound]->play();
 	}
+	
+	void Soundman::playMusic()
+	{
+		music->play();
+	}
+	void Soundman::stopMusic()
+	{
+		music->stop();
+	}
+	
 }
