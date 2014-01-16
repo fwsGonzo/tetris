@@ -29,11 +29,14 @@ namespace game
 		gravitySpeed = 0.5;
 		gravityTime = 0.0;
 		
-		movementSpeed = 0.05;
+		movementSpeed = 0.08;
 		movementTime = 0.0;
 		
 		rotationSpeed = 0.2;
 		rotationTime = 0.0;
+		
+		gameSpeed = 0.01;
+		gameTime  = 0.0;
 		
 		// current dropping
 		droppingDown = false;
@@ -159,6 +162,13 @@ namespace game
 					droppingDown = false;
 				}
 			}
+		}
+		
+		// increase game speed over time
+		if (time > gameTime + gameSpeed)
+		{
+			gameTime = time;
+			gravitySpeed -= 0.00001;
 		}
 		
 		// stop rendering when Escape key is pressed (effectively ending the game)
