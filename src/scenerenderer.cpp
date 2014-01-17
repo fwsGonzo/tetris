@@ -33,12 +33,12 @@ namespace game
 		shd.sendMatrix("matproj", camera.getProjection());
 	}
 	
-	bool SceneRenderer::render(double time, double dtime)
+	void SceneRenderer::render(Game& game, double time, double dtime)
 	{
 		Shader& shd = shaderman[Shaderman::BLOCK_SHADER];
 		shd.bind();
 		
-		Board& board = game->getBoard();
+		Board& board = game.getBoard();
 		
 		camera.setTranslation(-board.getWidth() / 2.0, -board.getHeight() / 2.0, -20);
 		
@@ -83,9 +83,6 @@ namespace game
 		
 		/// render current piece ///
 		activePiece.block->render(GL_QUADS);
-		
-		// run the gameloop, which also can exit the game (if it returns false)
-		return game->gameHandler(time, dtime);
 	}
 	
 }

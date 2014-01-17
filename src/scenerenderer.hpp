@@ -16,18 +16,12 @@ namespace game
 	public:
 		
 		void init(library::WindowClass& wnd);
-		void attachGame(Game& game)
-		{
-			this->game = &game;
-		}
 		
-		bool render(double time, double dtime);
+		void render(Game&, double time, double dtime);
 		
 	private:
 		library::Camera camera;
 		library::WindowClass* window;
-		Game* game;
-		
 	};
 
 }

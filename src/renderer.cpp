@@ -2,7 +2,7 @@
 
 #include <library/log.hpp>
 #include <library/opengl/opengl.hpp>
-#include <library/opengl/window.hpp>
+#include "game.hpp"
 #include "scenerenderer.hpp"
 
 using namespace library;
@@ -38,21 +38,24 @@ namespace game
 	{
 		/// start game ///
 		logger << Log::INFO << "Game started" << Log::ENDL;
-		scene.attachGame(game);
+		this->game = &game;
 		
-		window->startRenderingLoop(renderTetris, 1.0);
+		window->startRenderingLoop(*this, 1.0);
 		// close window after renderloop
 		window->close();
 	}
 	
-	bool renderTetris(WindowClass& wnd, double dtime, double timeElapsed)
+	bool Renderer::render(WindowClass& wnd, double dtime, double time)
 	{
 		glClearColor(0.1, 0.1, 0.1, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glEnable(GL_DEPTH_TEST);
 		
-		bool ret = scene.render(timeElapsed, dtime);
+		scene.render(*game, time, dtime);
+		
+		// run the gameloop, which also can exit the game (if it returns false)
+		bool ret = game->gameHandler(time, dtime);
 		
 		glfwSwapBuffers(wnd.window());
 		return ret;

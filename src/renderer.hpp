@@ -1,16 +1,13 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
-namespace library
-{
-	class WindowClass;
-}
+#include <library/opengl/window.hpp>
 
 namespace game
 {
 	class Game;
 	
-	class Renderer
+	class Renderer : public library::RenderClass
 	{
 	public:
 		Renderer();
@@ -24,8 +21,10 @@ namespace game
 		}
 		
 	private:
-		library::WindowClass* window;
+		bool render(library::WindowClass& wnd, double dtime, double timeElapsed);
 		
+		library::WindowClass* window;
+		Game* game;
 	};
 	
 }
