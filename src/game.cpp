@@ -147,11 +147,13 @@ namespace game
 				else
 				{
 					// the piece would hit something if it moved down, so instead place
+					// the function returns the number of rows removed as a result of the placement
 					int rowsRemoved = board->placeBlock();
 					
 					if (rowsRemoved)
 					{
 						// play amazing sounds and use legendary fx here
+						soundman->play(Soundman::ROW_COLLAPSE);
 					}
 					else
 					{	// play standard sound, just because

@@ -17,6 +17,8 @@ namespace game
 		sounds[PIECE_LAND] = new Sound("sound/SFX_PieceSoftDrop.ogg");
 		sounds[PIECE_DROP] = new Sound("sound/SFX_PieceHardDrop.ogg");
 		
+		sounds[ROW_COLLAPSE] = new Sound("sound/bang.ogg");
+		
 		music = new Stream("music/tetris.mp3");
 	}
 	Soundman::~Soundman()

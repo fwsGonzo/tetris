@@ -26,6 +26,8 @@ namespace game
 			PIECE_LAND,
 			PIECE_DROP,
 			
+			ROW_COLLAPSE,
+			
 			NUM_SOUNDS
 		};
 		enum music_t
