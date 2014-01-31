@@ -5,15 +5,54 @@
 
 namespace game
 {
-	struct CurrentPiece
+	class CurrentPiece
 	{
-		int x, y;
-		Block* block;
+	public:
+		CurrentPiece()
+		{
+			block = nullptr;
+		}
+		CurrentPiece(const CurrentPiece& cp)
+		{
+			*this = cp;
+		}
+		inline CurrentPiece& operator = (const CurrentPiece& cp)
+		{
+			block = cp.block;
+			x = cp.x; y = cp.y;
+			return *this;
+		}
 		
-		void rotate()
+		inline int getX() const { return x; }
+		inline int getY() const { return y; }
+		
+		inline Block& getBlock()
+		{
+			return *block;
+		}
+		inline void setBlock(Block* b)
+		{
+			this->block = b;
+		}
+		
+		inline void rotate()
 		{
 			block = &Shapes::get(block->getID(), (block->getRotation() + 1) % Shapes::ROTATIONS);
 		}
+		inline void setPosition(int X, int Y)
+		{
+			this->x = X;
+			this->y = Y;
+		}
+		void move(int X, int Y)
+		{
+			// move to relatively by (X, Y)
+			this->x += X; this->y += Y;
+		}
+		
+	private:
+		Block* block;
+		int x, y;
 	};
 	
 	class Board
@@ -47,7 +86,7 @@ namespace game
 		}
 		inline bool test(CurrentPiece& piece)
 		{
-			return board.testBlock(*piece.block, piece.x, piece.y);
+			return board.testBlock(piece.getBlock(), piece.getX(), piece.getY());
 		}
 		// returns the number of rows removed
 		int placeBlock();

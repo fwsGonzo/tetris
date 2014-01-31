@@ -42,11 +42,11 @@ namespace game
 	
 	void Board::selectNewPiece()
 	{
-		piece.block = nextPiece;
-		nextPiece   = &Shapes::randomShape();
-		
-		piece.x = getWidth() / 2 - piece.block->getWidth() / 2;
-		piece.y = getHeight(); // + piece.block->getHeight();
+		// set current piece from nextPiece and position at top of board
+		piece.setBlock(nextPiece);
+		piece.setPosition(getWidth() / 2 - nextPiece->getWidth() / 2, getHeight());
+		// randomly select next piece
+		nextPiece = &Shapes::randomShape();
 	}
 	
 	int Board::placeBlock()
@@ -54,7 +54,7 @@ namespace game
 		// combine the active piece with the current board (burn it into the board)
 		// algorithmically, we are just adding each pixel of the active piece to the board,
 		// with the exception of pixels with alpha=0
-		this->board.maskedBlit(*piece.block, piece.x, piece.y);
+		this->board.maskedBlit(piece.getBlock(), piece.getX(), piece.getY());
 		// select new piece automatically
 		selectNewPiece();
 		// remove any completed rows, to avoid annoying the player
@@ -74,4 +74,3 @@ namespace game
 	}
 	
 }
-

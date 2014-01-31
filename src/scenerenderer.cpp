@@ -75,14 +75,38 @@ namespace game
 		
 		board.renderBoard(GL_QUADS);
 		
-		// render active piece
 		CurrentPiece& activePiece = board.getPiece();
 		
-		matview.translate(activePiece.x, activePiece.y, 0);
+		if (game.getDroppingDown())
+		{
+			glEnable(GL_BLEND);
+			const int TRAIL = 5;
+			
+			for (int i = 0; i < TRAIL; i++)
+			{
+				float fade = 1.0 - (float)i / TRAIL;
+				//fade *= fade;
+				
+				// render active piece (last position)
+				mat4 mv = matview;
+				mv.translate_xy(activePiece.getX(), activePiece.getY() + (i + 1) * 0.5);
+				shd.sendMatrix("matview", mv);
+				shd.sendFloat("visibility", fade);
+				
+				/// render current piece (last position) ///
+				activePiece.getBlock().render(GL_QUADS);
+			}
+			
+			glDisable(GL_BLEND);
+		}
+		
+		// render active piece
+		matview.translate_xy(activePiece.getX(), activePiece.getY());
 		shd.sendMatrix("matview", matview);
+		shd.sendFloat("visibility", 1.0);
 		
 		/// render current piece ///
-		activePiece.block->render(GL_QUADS);
+		activePiece.getBlock().render(GL_QUADS);
 	}
 	
 }

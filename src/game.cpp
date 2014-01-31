@@ -50,6 +50,16 @@ namespace game
 	
 	bool Game::gameHandler(double time, double dtime)
 	{
+		bool tick = false;
+		
+		// increase game speed over time
+		if (time > gameTime + gameSpeed)
+		{
+			gameTime = time;
+			gravitySpeed -= 0.00001;
+			tick = true;
+		}
+		
 		if (droppingDown == false)
 		{
 			// brick movement
@@ -61,11 +71,11 @@ namespace game
 				if (input.getKey(GLFW_KEY_LEFT))
 				{
 					CurrentPiece piece = board->getPiece();
-					piece.x--; // create new active piece that we have already moved left
+					piece.move(-1, 0); // create new active piece that we have already moved left
 					
 					if (board->test(piece)) // test that the new piece is in a valid position
 					{
-						board->getPiece().x--;
+						board->getPiece().move(-1, 0);
 						soundman->play(Soundman::PIECE_MOVE);
 					}
 					else soundman->play(Soundman::PIECE_MOVE_F);
@@ -73,11 +83,11 @@ namespace game
 				if (input.getKey(GLFW_KEY_RIGHT))
 				{
 					CurrentPiece piece = board->getPiece();
-					piece.x++;
+					piece.move(1, 0);
 					
 					if (board->test(piece))
 					{
-						board->getPiece().x++;
+						board->getPiece().move(1, 0);
 						soundman->play(Soundman::PIECE_MOVE);
 					}
 					else soundman->play(Soundman::PIECE_MOVE_F);
@@ -112,37 +122,36 @@ namespace game
 			}
 		}
 		// move piece down over time (or when dropping)
-		if (time > gravityTime + gravitySpeed || droppingDown == true)
+		if (time > gravityTime + gravitySpeed || (droppingDown && tick))
 		{
 			gravityTime = time;
 			
-			if (board->getPiece().y >= board->getHeight())
+			// create clone of active piece, and move it down
+			CurrentPiece piece = board->getPiece();
+			piece.move(0, -1);
+			
+			if (board->getPiece().getY()+piece.getBlock().getHeight() >= board->getHeight())
 			{
 				// the piece is currently above the board itself, so we can't burn
 				// instead the game is over if it hits something
-				CurrentPiece piece = board->getPiece();
-				piece.y--;
-				
 				if (board->test(piece) == false)
 				{
-					// GAME OVER
+					/// GAME OVER ///
 					logger << Log::WARN << "Game over!" << Log::ENDL;
 					return false;
 				}
 				else // move the piece into the board (over time)
 				{
-					board->getPiece().y --;
+					board->getPiece().move(0, -1);
 				}
 			}
 			else
 			{
-				CurrentPiece piece = board->getPiece();
-				piece.y--;
-				
+				// piece is inside board, do regular testing
 				if (board->test(piece))
 				{
 					// we can continue moving the piece down, since it hit nothing
-					board->getPiece().y--;
+					board->getPiece().move(0, -1);
 				}
 				else
 				{
@@ -164,13 +173,6 @@ namespace game
 					droppingDown = false;
 				}
 			}
-		}
-		
-		// increase game speed over time
-		if (time > gameTime + gameSpeed)
-		{
-			gameTime = time;
-			gravitySpeed -= 0.00001;
 		}
 		
 		// stop rendering when Escape key is pressed (effectively ending the game)

@@ -34,6 +34,7 @@ void main(void)
 
 #endif
 #ifdef FRAGMENT_PROGRAM
+uniform float visibility;
 
 in vec4 out_color;
 in vec3 vpos;
@@ -48,7 +49,7 @@ void main(void)
 	vec3 fxd = pow(pos, vec3(N));
 	float dist = 1.0 - pow(fxd.x + fxd.y + fxd.z, 1.0 / N);
 	
-	vec4 color = out_color;
+	vec4 color = vec4(out_color.rgb, visibility);
 	color.rgb *= dist;
 	
 	gl_FragData[0] = color;

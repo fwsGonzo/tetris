@@ -23,6 +23,10 @@ namespace game
 		{
 			return *board;
 		}
+		inline bool getDroppingDown() const
+		{
+			return droppingDown;
+		}
 		
 	private:
 		Board*    board;
